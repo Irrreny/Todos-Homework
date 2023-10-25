@@ -105,18 +105,10 @@ document.addEventListener('DOMContentLoaded', function () {
   }
   
 
-  /*function handleCheckboxChange() {
-    if (checkbox.checked) {
-      console.log('Checkbox is checked')
-    } else {
-      console.log('Checkbox is unchecked')
-    }
-  }*/
-
   function handleCheckboxChange(todoId, isChecked) {
     
     const url = `https://jsonplaceholder.typicode.com/todos/${todoId}`
-    const newStatus = isChecked ? true : false
+    
 
     fetch(url, {
       method: 'PUT',
@@ -139,9 +131,3 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 })
 
-
-
-
-
-
-// 3. When checking a todo, set it's status to done and send the "completed" value to server using PUT
