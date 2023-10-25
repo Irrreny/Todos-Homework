@@ -35,19 +35,17 @@ document.addEventListener('DOMContentLoaded', function () {
 
   const button = document.getElementById('get_todos');
   const input = document.getElementById(`user-id-input`)
-  const checkbox = document.getElementById('checkbox2');
+  //const checkbox = document.getElementById(`checkbox2`)//
 
   
   if (button) {
     button.addEventListener('click', handleClick);
   }
-
-  if (checkbox) {
-    checkbox.addEventListener('change', handleCheckboxChange);
-  }
+  
+  
  
   function handleClick(event) {
-    event.preventDefault();
+    event.preventDefault()
     const userId = input.value
     const parError = document.getElementById(`error`)
     if (userId < 11) {
@@ -86,22 +84,58 @@ document.addEventListener('DOMContentLoaded', function () {
       spanTitle.classList.add(`todo-title`)
       spanTitle.textContent = todo.title
       spanCompleted.classList.add(`todo-completed`)
-      spanCompleted.textContent = todo.completed? `Done` : `Pending`
+      
       checkbox.type = `checkbox`
       checkbox.classList.add(`checkbox`)
       checkbox.id = `checkbox_${todo.id}`
+      
+
+      checkbox.addEventListener('change', function (event) {
+        handleCheckboxChange(todo.id, event.target.checked);
+      });
 
       li.append(checkbox)
       li.append(spanTitle)
       li.append(spanCompleted)
       ul.append(li)
     })
-
+    
     todosWrapper.append(ul)
-  }
 
-  function handleCheckboxChange() {
-    console.log('Checked', this.checked);
+  }
+  
+
+  /*function handleCheckboxChange() {
+    if (checkbox.checked) {
+      console.log('Checkbox is checked')
+    } else {
+      console.log('Checkbox is unchecked')
+    }
+  }*/
+
+  function handleCheckboxChange(todoId, isChecked) {
+    
+    const url = `https://jsonplaceholder.typicode.com/todos/${todoId}`
+    const newStatus = isChecked ? true : false
+
+    fetch(url, {
+      method: 'PUT',
+      body: JSON.stringify({ completed: isChecked }),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+      .then((response) => response.json())
+      .then((updatedTodo) => {
+        updateTodoStatus(todoId, updatedTodo.completed)
+      })
+      .catch((error) => console.log(error))
+  }
+  function updateTodoStatus(todoId, newStatus) {
+    const checkbox = document.getElementById(`checkbox_${todoId}`);
+    const parentLi = checkbox.closest('li'); 
+    const spanCompleted = parentLi.querySelector('.todo-completed')
+    spanCompleted.textContent = newStatus ? 'Done' : 'Pending';
   }
 })
 
@@ -109,6 +143,5 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
 
-// 1. Get real users list from https://jsonplaceholder.typicode.com/
-// 2. When setting user ID get this user ToDos
+
 // 3. When checking a todo, set it's status to done and send the "completed" value to server using PUT
